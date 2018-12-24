@@ -12,7 +12,7 @@ class JeopardyRound:
         elif rnum == 3:
             self._round_name = 'Final Jeopardy'
         else:
-            self._round_name = None
+            self._round_name = 'Invalid'
 
         # Initialize helper variables
         self._categories = None;
@@ -26,20 +26,6 @@ class JeopardyRound:
             # Initialize empty clue array for single clue
             self._clues = dict()
 
-
-class FinalJeopardyRound:
-    def __init__(self):
-        """Data structure for a round of final jeopardy"""
-
-        # Round name
-        self._round_name = 'Final Jeopardy'
-
-        # Helper variables
-        self._categories = None;
-        self._round_isvalid = True
-
-        # Initialize empty clue array for single clue
-        self._clues = dict()
 
 
 class JeopardyEpisode:

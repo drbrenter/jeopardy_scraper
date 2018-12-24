@@ -33,6 +33,7 @@ def create_soup(content):
     soup = BeautifulSoup(content, 'lxml')
     return soup
 
+
 def scrub_text(text):
     """Remove weird character formatting from text parsed from html that causes
         mismatched quotes"""
