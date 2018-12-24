@@ -1,5 +1,4 @@
 
-
 class JeopardyRound:
     def __init__(self, rnum):
         """Data structure representing a round of single or double jeopardy"""
@@ -27,14 +26,12 @@ class JeopardyRound:
             self._clues = dict()
 
 
-
 class JeopardyEpisode:
     def __init__(self):
         """Python data structure representing an entire three round episode of Jeopardy"""
 
-        # Date when episode first aired, and identifier number within j-archive
+        # Date when episode first aired
         self._air_date = None;
-        self._j_archive_id = None;
 
         # Structures for the three rounds of play
         self._single_jeopardy = JeopardyRound(1);

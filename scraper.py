@@ -116,13 +116,14 @@ def parse_jeopardy_round(soup, round_num, round_struct):
 def parse_jeopardy_game(soup, jeopardy_struct):
     """Parse the html data for all three rounds and get the data"""
 
-    # Get
+    # Get air episode air date, stored in html page title as
+    # 'J! Archive - Show #XXXX, aired YYYY-MM-DD'
+    jeopardy_struct._air_date = soup.title.get_text().split(' ')[-1]
 
     # Get single, double, and final jeopardy categories and clues
     parse_jeopardy_round(soup, 1, jeopardy_struct._single_jeopardy)
     parse_jeopardy_round(soup, 2, jeopardy_struct._double_jeopardy)
     parse_jeopardy_round(soup, 3, jeopardy_struct._final_jeopardy)
 
-    # Get final jeopardy category and clues
 
 
