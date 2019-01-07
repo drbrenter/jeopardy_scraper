@@ -91,19 +91,25 @@ def parse_jeopardy_round(soup, round_num, round_struct):
         return
 
     # Get category names
-    round_struct._categories = [category.get_text() for category in rdata.find_all('td',
-        class_='category_name')]
+    round_struct._categories = [scrub_text(category.get_text()) for category in
+        rdata.find_all('td', class_='category_name')]
 
     # Get clues and answers for single and double jeopardy
     if round_num == 1 or round_num == 2:
-        ctr = 0
+        xx = 0
+        yy = 0
         for clue_html in rdata.find_all('td', class_='clue'):
             # Get clue data
             clue, answer, is_valid = parse_single_clue(clue_html, False)
 
-            # Insert clue data in the round's data structure
-            round_struct._clues[ctr] = jeopardy.jeopardy_clue(clue, answer, is_valid)
-            ctr += 1
+            # Insert clue data in the round's data structure. Clues are read from html
+            # in row-major order, but we want to store them in column major (by category)
+            idx = yy + xx*round_struct._num_questions
+            round_struct._clues[idx] = jeopardy.jeopardy_clue(clue, answer, is_valid)
+            xx += 1
+            if xx == round_struct._num_categories:
+                xx = 0
+                yy += 1
     # Get clues and answers for final jeopardy
     else:
         # Get clue data

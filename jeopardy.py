@@ -3,15 +3,21 @@ class JeopardyRound:
     def __init__(self, rnum):
         """Data structure representing a round of single or double jeopardy"""
 
-        # Round name
+        # Round name and number of questions and categories
+        self._num_categories = 6
+        self._num_questions  = 5
         if rnum == 1:
             self._round_name = 'Jeopardy'
         elif rnum == 2:
             self._round_name = 'Double Jeopardy'
         elif rnum == 3:
             self._round_name = 'Final Jeopardy'
+            self._num_categories = 1
+            self._num_questions  = 1
         else:
             self._round_name = 'Invalid'
+            self._num_categories = 0
+            self._num_questions  = 0
 
         # Initialize helper variables
         self._categories = None;
@@ -44,3 +50,9 @@ def jeopardy_clue(clue_txt, answer_txt, isvalid=False):
         for a single clue in Jeopardy"""
     clue = {'clue': clue_txt, 'answer': answer_txt, 'isvalid': isvalid}
     return clue
+
+
+def clear_screen():
+    """Clear previous outputs from console. Should work cross-platform."""
+    os.system('cls' if os.name=='nt' else 'clear')
+
