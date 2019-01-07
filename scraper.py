@@ -110,6 +110,9 @@ def parse_jeopardy_round(soup, round_num, round_struct):
             if xx == round_struct._num_categories:
                 xx = 0
                 yy += 1
+        # Initialize the text string representation and number of valid clues
+        jeopardy.update_round(round_struct)
+
     # Get clues and answers for final jeopardy
     else:
         # Get clue data

@@ -22,8 +22,10 @@ class JeopardyRound:
             self._num_questions  = 0
 
         # Initialize helper variables
-        self._categories = None;
-        self._round_isvalid = False;
+        self._categories = None
+        self._round_isvalid = False
+        self._round_text = ''
+        self._num_valid_questions = 0
 
         # Initialize empty clue array for all clues, column major order
         if rnum == 1 or rnum == 2:
@@ -89,3 +91,17 @@ def get_game_board(round_struct):
         game_board_text += category_text
 
     return game_board_text
+
+
+def update_round(round_struct):
+    """For a given round, update the text string for user friendly visualization of
+        remaining questions, as well as the number of remaining valid questions."""
+    # Update text
+    round_struct._round_text = get_game_board(round_struct)
+
+    # Update number of valid questions variable
+    num_valid = 0
+    for question in round_struct._clues:
+        if question['isvalid']:
+            num_valid += 1
+    round_struct._num_valid_questions = num_valid
