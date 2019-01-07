@@ -1,3 +1,5 @@
+import os
+
 
 class JeopardyRound:
     def __init__(self, rnum):
@@ -105,3 +107,37 @@ def update_round(round_struct):
         if question['isvalid']:
             num_valid += 1
     round_struct._num_valid_questions = num_valid
+
+
+def play_jeopardy_round(round_struct):
+
+    # Update text string and number of valid questions
+    update_round(round_struct)
+    while round_struct._num_valid_questions > 0:
+
+        # Clear console screen
+        clear_screen()
+
+        # Show game board
+        print(round_struct._round_text)
+
+        # Ask user for input, which category and question they want
+        idx_category = int(input('Which category number? : '))
+        idx_question = int(input('Which question number? : '))
+        idx = get_clue_idx(idx_category, idx_question, round_struct._num_questions)
+
+        # Clear console screen
+        clear_screen()
+
+        # Show their desired question and mark it as invalid
+        clue = round_struct._clues[idx]
+        print('Category: ' + round_struct._categories[idx_category])
+        print('Question: ' + clue['clue'])
+        print('Answer: ' + clue['answer'])
+        round_struct._clues[idx]['isvalid'] = False
+
+        # Wait for user input before proceding
+        ok = input('OK? : ')
+
+        # Update text string and number of valid questions
+        update_round(round_struct)
