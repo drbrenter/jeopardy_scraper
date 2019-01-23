@@ -43,12 +43,30 @@ class JeopardyEpisode:
         """Python data structure representing an entire three-round episode of Jeopardy"""
 
         # Date when episode first aired
-        self._air_date = None;
+        self._air_date = None
 
         # Structures for the three rounds of play
-        self._single_jeopardy = JeopardyRound(1);
-        self._double_jeopardy = JeopardyRound(2);
-        self._final_jeopardy  = JeopardyRound(3);
+        self._single_jeopardy = JeopardyRound(1)
+        self._double_jeopardy = JeopardyRound(2)
+        self._final_jeopardy  = JeopardyRound(3)
+
+
+class JeopardyPlayer:
+    def __init__(self):
+        """A structure representing a player in the game of Jeopardy"""
+
+        # Initialize score to zero
+        self._score = 0
+        # Initialize name to empty
+        self._name = ''
+
+    def correct_answer(self, value):
+        """Player got answer correct, increment score."""
+        self._score += value
+
+    def incorrect_answer(self, value):
+        """Player got answer wrong, decrement score."""
+        self._score -= value
 
 
 def jeopardy_clue(clue_txt, answer_txt, isvalid=False):
