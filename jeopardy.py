@@ -52,13 +52,13 @@ class JeopardyEpisode:
 
 
 class JeopardyPlayer:
-    def __init__(self):
+    def __init__(self, name=''):
         """A structure representing a player in the game of Jeopardy"""
 
         # Initialize score to zero
         self._score = 0
         # Initialize name to empty
-        self._name = ''
+        self._name = name
 
     def correct_answer(self, value):
         """Player got answer correct, increment score."""
@@ -127,7 +127,28 @@ def update_round(round_struct):
     round_struct._num_valid_questions = num_valid
 
 
-def play_jeopardy_round(round_struct):
+def play_question(round_struct, idx_category, idx_question, players):
+    """ Play a single question."""
+
+    idx = get_clue_idx(idx_category, idx_question, round_struct._num_questions)
+    clue = round_struct._clues[idx]
+    category = round_struct._categories[idx_category]
+    value = round_struct._values[idx_question]
+
+    # Show question
+    print('Category: ' + category)
+    print('Value: ' + str(value))
+    print('Question: ' + clue['clue'])
+    print('Answer: ' + clue['answer'])
+
+    # Mark clue as invalid now that it has been played
+    round_struct._clues[idx]['isvalid'] = False
+
+    # Wait for user input before proceding
+    user_input = input('Player buzz in [1/2/3] or skip [s]? : ')
+
+
+def play_jeopardy_round(round_struct, players):
 
     # Update text string and number of valid questions
     update_round(round_struct)
@@ -142,20 +163,12 @@ def play_jeopardy_round(round_struct):
         # Ask user for input, which category and question they want
         idx_category = int(input('Which category number? : '))
         idx_question = int(input('Which question number? : '))
-        idx = get_clue_idx(idx_category, idx_question, round_struct._num_questions)
 
         # Clear console screen
         clear_screen()
 
         # Show their desired question and mark it as invalid
-        clue = round_struct._clues[idx]
-        print('Category: ' + round_struct._categories[idx_category])
-        print('Question: ' + clue['clue'])
-        print('Answer: ' + clue['answer'])
-        round_struct._clues[idx]['isvalid'] = False
-
-        # Wait for user input before proceding
-        ok = input('OK? : ')
+        play_question(round_struct, idx_category, idx_question, players)
 
         # Update text string and number of valid questions
         update_round(round_struct)
