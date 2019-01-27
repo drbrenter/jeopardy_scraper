@@ -31,7 +31,7 @@ if __name__ == "__main__":
     if num_players < 1 or num_players > 3:
         print('Invalid number of players selected. Please choose  a number between ' \
             '1 and 3. Chosen: ' + str(num_players))
-        exit
+        sys.exit
 
     # Initialize players
     players = []
@@ -40,6 +40,19 @@ if __name__ == "__main__":
         new_player = jeopardy.JeopardyPlayer(name)
         players.append(new_player)
 
-    # Play jeopardy round
+    # Play single jeopardy round
     jeopardy.play_jeopardy_round(jeopardy_game._single_jeopardy, players)
 
+    # Find who has the least score and denote that they go first
+    scores = [player._score for player in players]
+    jeopardy_game._double_jeopardy._whose_pick = scores.index(min(scores))
+
+    # Play double jeopardy
+    jeopardy.play_jeopardy_round(jeopardy_game._double_jeopardy, players)
+
+    # Play final jeopardy
+    # TODO
+    # jeopardy.play_jeopardy_round(jeopardy_game._final_jeopardy, players)
+
+    # Print final scores
+    print(jeopardy.get_player_scores(players))

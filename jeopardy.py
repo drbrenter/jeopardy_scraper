@@ -90,7 +90,7 @@ def get_clue_idx(category_number, question_number, questions_per_category):
 def get_game_board(round_struct):
     """Reads the data structure (dictionary array) for the jeopardy round and returns
        a string containing the remaining clues to choose from."""
-    game_board_text = 'Game Board: \n'
+    game_board_text = round_struct._round_name + ' \n'
 
     # Iterate through categories
     for category_idx, category in enumerate(round_struct._categories):
@@ -114,7 +114,6 @@ def get_game_board(round_struct):
     return game_board_text
 
 
-
 def get_player_scores(players):
     """ Return a string with player's names and scores."""
     player_score_text = 'Current Player Scores: \n'
@@ -124,6 +123,7 @@ def get_player_scores(players):
         player_text = player._name + ': ' + str(player._score) + '\n'
         player_score_text += player_text
     return player_score_text
+
 
 def update_round(round_struct):
     """For a given round, update the text string for user friendly visualization of
@@ -139,6 +139,14 @@ def update_round(round_struct):
     round_struct._num_valid_questions = num_valid
 
 
+def test_string_for_int(input_str):
+    """Test an input string to see if it contains an integer or something else."""
+    try:
+        int_str = int(input_str)
+        return True
+    except:
+        return False
+
 def play_question(round_struct, idx_category, idx_question, players):
     """ Play a single question."""
 
@@ -146,6 +154,10 @@ def play_question(round_struct, idx_category, idx_question, players):
     clue = round_struct._clues[idx]
     category = round_struct._categories[idx_category]
     value = round_struct._values[idx_question]
+
+    # Check question is valid
+    if not round_struct._clues[idx]['isvalid']:
+        return
 
     # Show question
     print('Category: ' + category)
@@ -160,18 +172,23 @@ def play_question(round_struct, idx_category, idx_question, players):
 
     # Parse player input
     if user_input == 's':
+        # Selected skip, do nothing
         return
-    elif int(user_input) <= len(players):
+    elif test_string_for_int(user_input):
+        # Rang in, check that its a valid player
         who_rang = int(user_input)-1
-        was_correct = player_rang_in(players, who_rang, clue, value)
-        if was_correct:
-            round_struct._whose_pick = who_rang
+        if who_rang <= (len(players) - 1):
+            was_correct = player_rang_in(players, who_rang, clue, value)
+            if was_correct:
+                round_struct._whose_pick = who_rang
     else:
         print('Invalid option: ' + user_input + '. Skipping question.')
         return
 
 
 def player_rang_in(players, player_idx, clue, value):
+    """After a player has rung in, show the answer, see if they were correct, and
+        increment the score appropriately."""
 
     # Give the player a chance to answer
     print(players[player_idx]._name + ' rang in.')
@@ -212,14 +229,23 @@ def play_jeopardy_round(round_struct, players):
         # Ask user for input, which category and question they want
         whose = players[round_struct._whose_pick]._name
         print(whose + '\'s choice: ')
-        idx_category = int(input('Which category number? : '))
-        idx_question = int(input('Which question number? : '))
+        idx_category = input('Which category number? : ')
+        idx_question = input('Which question number? : ')
+
+        # Check we got valid inputs
+        if not test_string_for_int(idx_category) or not test_string_for_int(idx_question):
+            continue
+        if int(idx_category) >= round_struct._num_categories or \
+            int(idx_question) >= round_struct._num_questions:
+            continue
 
         # Clear console screen
         clear_screen()
 
         # Show their desired question and mark it as invalid
-        play_question(round_struct, idx_category, idx_question, players)
+        play_question(round_struct, int(idx_category), int(idx_question), players)
 
         # Update text string and number of valid questions
         update_round(round_struct)
+
+
