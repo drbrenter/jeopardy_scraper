@@ -1,5 +1,6 @@
 import os.path
 import sys
+from random import randint
 
 import scraper
 import jeopardy
@@ -9,14 +10,26 @@ if __name__ == "__main__":
 
     # TODO: Something better here...
     data_folder = './episode_data/'
-    file_path = '2017-09-27.txt'
-    data_to_read_path = data_folder + file_path
+    data_source = 'web'
+    # data_source = 'file'
 
     # Initialize jeopardy data object
     jeopardy_game = jeopardy.JeopardyEpisode()
 
-    # Get Jeopardy data
-    txt = scraper.get_data_from_text_file(data_to_read_path)
+    # Get Jeopardy data from existing text file
+    if data_source == 'file':
+        file_path = '2017-09-27.txt'
+        data_to_read_path = data_folder + file_path
+        txt = scraper.get_data_from_text_file(data_to_read_path)
+
+    # Get Jeopardy data - pick a random episode from j-archive
+    elif data_source == 'web':
+        url_base = 'http://www.j-archive.com/showgame.php?game_id='
+        # Valid episode numbers range from 173 (season 1, episode 1) to 6201 (current as of 1/25/19)
+        episode_number = randint(173,6201)
+        full_url = url_base + str(episode_number)
+        txt = scraper.get_data_from_web(full_url)
+
     soup = scraper.create_soup(txt)
     scraper.parse_jeopardy_game(soup, jeopardy_game)
 
