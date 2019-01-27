@@ -28,6 +28,7 @@ class JeopardyRound:
         self._round_isvalid = False
         self._round_text = ''
         self._num_valid_questions = 0
+        self._whose_pick = 0
 
         # Initialize empty clue array for all clues, column major order
         if rnum == 1 or rnum == 2:
@@ -89,7 +90,7 @@ def get_clue_idx(category_number, question_number, questions_per_category):
 def get_game_board(round_struct):
     """Reads the data structure (dictionary array) for the jeopardy round and returns
        a string containing the remaining clues to choose from."""
-    game_board_text = ''
+    game_board_text = 'Game Board: \n'
 
     # Iterate through categories
     for category_idx, category in enumerate(round_struct._categories):
@@ -112,6 +113,17 @@ def get_game_board(round_struct):
 
     return game_board_text
 
+
+
+def get_player_scores(players):
+    """ Return a string with player's names and scores."""
+    player_score_text = 'Current Player Scores: \n'
+
+    # Iterate through players
+    for player_idx, player in enumerate(players):
+        player_text = player._name + ': ' + str(player._score) + '\n'
+        player_score_text += player_text
+    return player_score_text
 
 def update_round(round_struct):
     """For a given round, update the text string for user friendly visualization of
@@ -139,13 +151,49 @@ def play_question(round_struct, idx_category, idx_question, players):
     print('Category: ' + category)
     print('Value: ' + str(value))
     print('Question: ' + clue['clue'])
-    print('Answer: ' + clue['answer'])
 
     # Mark clue as invalid now that it has been played
     round_struct._clues[idx]['isvalid'] = False
 
     # Wait for user input before proceding
     user_input = input('Player buzz in [1/2/3] or skip [s]? : ')
+
+    # Parse player input
+    if user_input == 's':
+        return
+    elif int(user_input) <= len(players):
+        who_rang = int(user_input)-1
+        was_correct = player_rang_in(players, who_rang, clue, value)
+        if was_correct:
+            round_struct._whose_pick = who_rang
+    else:
+        print('Invalid option: ' + user_input + '. Skipping question.')
+        return
+
+
+def player_rang_in(players, player_idx, clue, value):
+
+    # Give the player a chance to answer
+    print(players[player_idx]._name + ' rang in.')
+    any_input = input('Press any key when ready for answer: ')
+
+    # Show answer and query if player answered correctly
+    print('Correct answer: ' + clue['answer'])
+    was_correct = input(players[player_idx]._name + ' got correct answer [y/n]? Or skip [s]:')
+
+    # Increment player score, or skip
+    return_correct = False
+    if was_correct == 'y':
+        players[player_idx].correct_answer(value)
+        return_correct = True
+    elif was_correct == 'n':
+        players[player_idx].incorrect_answer(value)
+    elif was_correct == 's':
+        print('Selected to skip, no penalty.')
+    else:
+        print('Invalid option: ' + was_correct + '. Skipping.')
+
+    return return_correct
 
 
 def play_jeopardy_round(round_struct, players):
@@ -158,9 +206,12 @@ def play_jeopardy_round(round_struct, players):
         clear_screen()
 
         # Show game board
+        print(get_player_scores(players))
         print(round_struct._round_text)
 
         # Ask user for input, which category and question they want
+        whose = players[round_struct._whose_pick]._name
+        print(whose + '\'s choice: ')
         idx_category = int(input('Which category number? : '))
         idx_question = int(input('Which question number? : '))
 

@@ -41,5 +41,5 @@ if __name__ == "__main__":
         players.append(new_player)
 
     # Play jeopardy round
-    jeopardy.play_jeopardy_round(jeopardy_game._double_jeopardy, players)
+    jeopardy.play_jeopardy_round(jeopardy_game._single_jeopardy, players)
 
